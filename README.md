@@ -192,11 +192,16 @@ Kratek pozdrav in predstavitev področij, pri katerih lahko chatbot pomaga.
 
 ```text
 codex-rag-chatbot/
-├── README.md
+├── README.md/
 ├── workflows/
 │   ├── rag-upload-pinecone.json
-│   └── chatbot.json
-└── docs/
+│   ├── chatbot.json
+├── data/
+│   ├── CODEX_2010_katalog_NET_links.md
+├── prompts/
+│   ├── system_prompt_en.md
+│   └── system_prompt_sl.md
+│   └── tool_description.md
 ```
 
 ---
