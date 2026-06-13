@@ -1,0 +1,15 @@
+# Credentials / secrets
+.env
+*.key
+credentials.json
+
+# n8n local files
+.n8n/
+
+# Python
+__pycache__/
+*.pyc
+
+# OS files
+.DS_Store
+Thumbs.db

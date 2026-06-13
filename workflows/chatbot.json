@@ -1,0 +1,193 @@
+{
+  "name": "codex_chat_bot",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "=Pozdravljeni! Sem virtualni pomočnik podjetja Codex d.o.o. Lahko vam pomagam  pri vprašanjih o izdelkih, specifikacijah ali distributerjih.\n\nHello! 👋 I'm the Codex d.o.o. virtual assistant. I can help you with questions about our products, specifications, or distributors.\n",
+        "options": {
+          "title": "Codex - Pomoč pri izdelkih"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "c03a3eef-4d8f-42c2-a5f8-a23e2522d691",
+      "name": "When chat message received",
+      "webhookId": "ce1e4030-7107-408a-aab1-502265a333f1"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=You are a customer support assistant for Codex d.o.o. (Murska Sobota, Slovenia), \na company specializing in bearings, chains, belts, housings, seals, retaining \nrings, adhesives, and other industrial mechanical parts.\n\nYour task is to answer questions about:\n- products and the sales programme (bearings, chains, belts, housings, seals, \n  retaining rings, adhesives, other industrial parts)\n- technical specifications and definitions of terms\n- distributors and sale points by country\n- company contact information\n\nRULES:\n1. For every content-related question (products, specifications, distributors, \n   contacts) ALWAYS use the codex_catalog_search tool to retrieve information \n   from the catalog before answering. Do not answer based on your own prior \n   knowledge about Codex.\n\n2. Respond in the same language the user used to ask the question, regardless \n   of the language of the text returned from the catalog (the catalog contains \n   content in Slovenian, English, German, Croatian, and Serbian).\n\n3. Keep answers clear, concise, and well-structured (use lists where appropriate - \n   e.g. when listing distributors or products).\n\n4. If the search results do not contain relevant information, say so directly. \n   Do not make up information (prices, contacts, addresses, etc.). In this case, \n   suggest the user contact Codex at info@codex.si or visit www.codex.si for \n   further details.\n\n5. If a question is unclear or too broad (e.g. \"tell me about bearings\"), you \n   may ask a brief clarifying question, or offer an overview of the main \n   categories from the sales programme.\n\n6. Do not answer questions unrelated to Codex, its products, catalog, or \n   distributors. In that case, politely explain that you are here to help with \n   questions about the Codex product range.\n\nMaintain a friendly, professional, and concise tone appropriate for customer \ncommunication."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "2f840f90-e780-4eae-9a26-6a1788c25895",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        80,
+        208
+      ],
+      "id": "e02d40d8-b5ad-4124-9579-4dbaf2dc0c6a",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "oKGw3v8fqVNFby3m",
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        224,
+        208
+      ],
+      "id": "e3807e50-5ef9-4b03-ad94-70d455d2bf8f",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "=Searches the Codex d.o.o. sales catalog (CODEX_2010_katalog_NET_links) for information about bearings, chains, belts, housings, seals, retaining rings, adhesives, and related industrial mechanical parts, as well as company information, product specifications, technical definitions, and the list of distributors and sales points by country.\n\nUse this tool whenever the user asks about:\n- specific products, product categories, or technical specifications (e.g. bearing types, dimensions, materials)\n- the Codex sales programme or product catalog structure\n- definitions of technical terms used in the catalog\n- distributors, dealers, or sale points in a specific country or region\n- company contact information (address, phone, email)\n\nThe input should be a concise search query describing what information is needed (e.g. \"extreme bearings specifications\" or \"distributor Slovakia\"). The tool returns the most relevant excerpts from the catalog.\n\nDo not use this tool for general questions unrelated to Codex products, the catalog, or its distributors.",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "codexchatbot",
+          "mode": "list",
+          "cachedResultName": "codexchatbot"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.3,
+      "position": [
+        368,
+        240
+      ],
+      "id": "9daae0cc-c0ef-4845-a506-5bb89e04fd73",
+      "name": "codex_catalog_search",
+      "credentials": {
+        "pineconeApi": {
+          "id": "R1PBBX0MpWYpABmJ",
+          "name": "Pinecone account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        352,
+        400
+      ],
+      "id": "3e7bef8d-5e44-434f-8d0b-cb8f0ca1424a",
+      "name": "Embeddings OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "oKGw3v8fqVNFby3m",
+          "name": "OpenAI account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "codex_catalog_search": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "codex_catalog_search",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "3ecd9474-6b89-4752-b2f0-ada14cd8f15a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e6447231e415d8e0e79c98df53f9bdb3771bb62488f18e277933ab03abfe4cbc"
+  },
+  "id": "v2818ZbSKcvaiPxm",
+  "tags": []
+}
