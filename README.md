@@ -195,6 +195,7 @@ A short greeting and an overview of the topics the chatbot can help with.
 ```text
 codex-rag-chatbot/
 ├── README.md/
+├── README.sl.md/
 ├── workflows/
 │   ├── rag-upload-pinecone.json
 │   ├── chatbot.json

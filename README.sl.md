@@ -146,7 +146,7 @@ Omogoča ohranjanje konteksta med pogovorom.
 ### Retrieval Tool
 
 ```text
-codex\_catalog\_search
+codex\\\_catalog\\\_search
 ```
 
 Pinecone Vector Store Tool skrbi za pridobivanje relevantnih informacij iz kataloga.
@@ -155,7 +155,7 @@ Pinecone Vector Store Tool skrbi za pridobivanje relevantnih informacij iz katal
 
 ## 📜 Ključna pravila agenta
 
-* Za vsa vsebinska vprašanja mora uporabiti `codex\_catalog\_search`.
+* Za vsa vsebinska vprašanja mora uporabiti `codex\\\_catalog\\\_search`.
 * Odgovarja v jeziku uporabnika.
 * Če informacije ni mogoče najti, uporabnika usmeri na `info@codex.si`.
 * Zavrne vprašanja, ki niso povezana s katalogom ali podjetjem Codex.
@@ -195,15 +195,17 @@ Kratek pozdrav in predstavitev področij, pri katerih lahko chatbot pomaga.
 ```text
 codex-rag-chatbot/
 ├── README.md/
+
+├── README.sl.md/
 ├── workflows/
 │   ├── rag-upload-pinecone.json
 │   ├── chatbot.json
 ├── data/
-│   ├── CODEX\_2010\_katalog\_NET\_links.md
+│   ├── CODEX\\\_2010\\\_katalog\\\_NET\\\_links.md
 ├── prompts/
-│   ├── system\_prompt\_en.md
-│   └── system\_prompt\_sl.md
-│   └── tool\_description.md
+│   ├── system\\\_prompt\\\_en.md
+│   └── system\\\_prompt\\\_sl.md
+│   └── tool\\\_description.md
 ```
 
 \---
