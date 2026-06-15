@@ -1,34 +1,36 @@
+🇬🇧 English | [🇸🇮 Slovenščina](README.sl.md)
+
 # 🚀 Codex RAG Chatbot
 
-AI klepetalni pomočnik (RAG – Retrieval Augmented Generation) za podjetje **Codex d.o.o.**, ki uporabnikom omogoča hitro pridobivanje informacij o izdelkih, tehničnih specifikacijah, distributerjih in kontaktnih podatkih na podlagi uradnega prodajnega kataloga podjetja.
+An AI chatbot (RAG – Retrieval Augmented Generation) for **Codex d.o.o.**, allowing users to quickly retrieve information about products, technical specifications, distributors, and contact details based on the company's official sales catalog.
 
 ---
 
-## 📋 Pregled projekta
+## 📋 Project Overview
 
-Codex uporablja obsežen 143-stranski večjezični katalog izdelkov (slovenščina, angleščina, nemščina, hrvaščina in srbščina). Iskanje informacij v takšnem dokumentu je za uporabnike pogosto zamudno, zato je bil razvit RAG chatbot, ki:
+Codex uses an extensive 143-page multilingual product catalog (Slovenian, English, German, Croatian, and Serbian). Searching for information in such a document is often time-consuming for users, so a RAG chatbot was developed that:
 
-* razume vprašanja v naravnem jeziku,
-* poišče relevantne informacije v katalogu,
-* odgovarja v jeziku uporabnika,
-* zmanjšuje potrebo po ročnem iskanju po dokumentaciji.
-
----
-
-## 🎯 Cilji
-
-* Omogočiti hitro iskanje informacij po katalogu.
-* Zmanjšati čas iskanja tehničnih specifikacij in kontaktnih podatkov.
-* Zagotoviti odgovore na podlagi uradnih podatkov podjetja.
-* Preprečiti halucinacije modela z uporabo vektorskega iskanja.
+* understands questions in natural language,
+* finds relevant information in the catalog,
+* responds in the user's language,
+* reduces the need for manual searching through documentation.
 
 ---
 
-## 🏗️ Arhitektura sistema
+## 🎯 Goals
 
-Projekt je sestavljen iz dveh ločenih n8n workflow-ov.
+* Enable fast retrieval of information from the catalog.
+* Reduce the time needed to find technical specifications and contact details.
+* Provide answers based on the company's official data.
+* Prevent model hallucinations through the use of vector search.
 
-### Workflow A – Indeksiranje kataloga
+---
+
+## 🏗️ System Architecture
+
+The project consists of two separate n8n workflows.
+
+### Workflow A – Catalog Indexing
 
 ```text
 Manual Trigger
@@ -49,7 +51,7 @@ OpenAI Embeddings
 Pinecone Vector Store (Insert)
 ```
 
-Ta workflow se izvede ob posodobitvi kataloga in poskrbi za pripravo podatkov za semantično iskanje.
+This workflow runs whenever the catalog is updated and prepares the data for semantic search.
 
 ### Workflow B – Chatbot
 
@@ -66,34 +68,34 @@ AI Agent
    Relevant Context
 ```
 
-Chatbot uporablja vektorsko iskanje za pridobivanje relevantnih informacij iz Pinecone baze in nato generira odgovor z uporabo OpenAI modela.
+The chatbot uses vector search to retrieve relevant information from the Pinecone database and then generates a response using the OpenAI model.
 
 ---
 
-## 📥 Priprava podatkov
+## 📥 Data Preparation
 
-Originalni PDF katalog je bil pretvorjen v Markdown format z uporabo CloudConvert.
+The original PDF catalog was converted to Markdown format using CloudConvert.
 
-Postopek priprave podatkov:
+Data preparation process:
 
-1. PDF katalog se pretvori v Markdown.
-2. Markdown datoteka se shrani v Google Drive.
-3. n8n workflow prenese datoteko.
-4. Besedilo se razdeli na manjše segmente (chunks).
-5. Za vsak segment se ustvarijo embeddings.
-6. Embeddings se shranijo v Pinecone.
+1. The PDF catalog is converted to Markdown.
+2. The Markdown file is stored on Google Drive.
+3. The n8n workflow downloads the file.
+4. The text is split into smaller segments (chunks).
+5. Embeddings are generated for each segment.
+6. Embeddings are stored in Pinecone.
 
-Takšen pristop omogoča učinkovito semantično iskanje po celotni vsebini kataloga.
+This approach enables efficient semantic search across the entire content of the catalog.
 
 ---
 
-## 🧠 Indeksiranje v Pinecone
+## 🧠 Pinecone Indexing
 
 ### Text Splitter
 
 * Recursive Character Text Splitter
-* Chunk size: ~1000 znakov
-* Overlap: ~200 znakov
+* Chunk size: ~1000 characters
+* Overlap: ~200 characters
 
 ### Embeddings
 
@@ -109,9 +111,9 @@ text-embedding-3-small
 codexchatbot
 ```
 
-Vsak chunk vsebuje:
+Each chunk contains:
 
-* besedilo
+* text
 * source
 * blobType
 * loc.lines.from
@@ -127,11 +129,11 @@ Vsak chunk vsebuje:
 GPT-4o mini
 ```
 
-Model je bil izbran zaradi dobrega razmerja med:
+The model was chosen for its good balance between:
 
-* kakovostjo odgovorov,
-* hitrostjo odziva,
-* stroški izvajanja.
+* response quality,
+* response speed,
+* operating cost.
 
 ### Memory
 
@@ -139,7 +141,7 @@ Model je bil izbran zaradi dobrega razmerja med:
 Window Buffer Memory
 ```
 
-Omogoča ohranjanje konteksta med pogovorom.
+Maintains context throughout the conversation.
 
 ### Retrieval Tool
 
@@ -147,48 +149,48 @@ Omogoča ohranjanje konteksta med pogovorom.
 codex_catalog_search
 ```
 
-Pinecone Vector Store Tool skrbi za pridobivanje relevantnih informacij iz kataloga.
+The Pinecone Vector Store Tool retrieves relevant information from the catalog.
 
 ---
 
-## 📜 Ključna pravila agenta
+## 📜 Key Agent Rules
 
-* Za vsa vsebinska vprašanja mora uporabiti `codex_catalog_search`.
-* Odgovarja v jeziku uporabnika.
-* Če informacije ni mogoče najti, uporabnika usmeri na `info@codex.si`.
-* Zavrne vprašanja, ki niso povezana s katalogom ali podjetjem Codex.
+* For all content-related questions, the agent must use `codex_catalog_search`.
+* It responds in the user's language.
+* If information cannot be found, it directs the user to `info@codex.si`.
+* It declines questions not related to the catalog or Codex.
 
 ---
 
-## 💬 Chat vmesnik
+## 💬 Chat Interface
 
-**Naslov:**
+**Title:**
 
 ```text
-Codex pomočnik
+Codex Assistant
 ```
 
-**Začetno sporočilo:**
+**Starter message:**
 
-Kratek pozdrav in predstavitev področij, pri katerih lahko chatbot pomaga.
-
----
-
-## 🛠️ Tehnološki sklad
-
-| Komponenta                    | Orodje                        |
-| ----------------------------- | ----------------------------- |
-| Avtomatizacija / orkestracija | n8n                           |
-| Pretvorba PDF → Markdown      | CloudConvert                  |
-| Shranjevanje datotek          | Google Drive                  |
-| Embeddings                    | OpenAI text-embedding-3-small |
-| Vektorska baza                | Pinecone                      |
-| Chat model                    | GPT-4o mini                   |
-| Memory                        | Window Buffer Memory          |
+A short greeting and an overview of the topics the chatbot can help with.
 
 ---
 
-## 📁 Struktura repozitorija
+## 🛠️ Tech Stack
+
+| Component                  | Tool                           |
+| --------------------------- | -------------------------------- |
+| Automation / orchestration  | n8n                               |
+| PDF → Markdown conversion    | CloudConvert                     |
+| File storage                 | Google Drive                     |
+| Embeddings                   | OpenAI text-embedding-3-small    |
+| Vector database              | Pinecone                          |
+| Chat model                   | GPT-4o mini                      |
+| Memory                       | Window Buffer Memory              |
+
+---
+
+## 📁 Repository Structure
 
 ```text
 codex-rag-chatbot/
@@ -206,40 +208,39 @@ codex-rag-chatbot/
 
 ---
 
-## 💡 Arhitekturne odločitve
+## 💡 Architectural Decisions
 
-### Markdown kot vmesni format
+### Markdown as an Intermediate Format
 
-Pretvorba PDF dokumenta v Markdown poenostavi nadaljnjo obdelavo in izboljša kakovost segmentacije besedila.
+Converting the PDF document to Markdown simplifies further processing and improves the quality of text segmentation.
 
-### Chunking z overlapom
+### Chunking with Overlap
 
-Overlap med segmenti zmanjšuje izgubo konteksta na mejah posameznih chunkov.
+Overlap between segments reduces context loss at the boundaries of individual chunks.
 
-### Ločena workflow-a
+### Separate Workflows
 
-Indeksiranje in chatbot sta ločena procesa, kar omogoča enostavnejše vzdrževanje in boljšo skalabilnost.
+Indexing and the chatbot are separate processes, which makes maintenance easier and improves scalability.
 
-### Obvezna uporaba retrieval orodja
+### Mandatory Use of the Retrieval Tool
 
-Agent mora za vse vsebinske odgovore uporabiti Pinecone iskanje, s čimer se zmanjša možnost halucinacij in poveča zanesljivost odgovorov.
-
----
-
-## 🔐 Varnost
-
-Vsi API ključi in poverilnice so shranjeni izključno v n8n Credentials.
-
-Repozitorij ne vsebuje:
-
-* OpenAI API ključev,
-* Pinecone API ključev,
-* Google Drive poverilnic,
-* drugih občutljivih podatkov.
+For all content-related answers, the agent must use Pinecone search, reducing the likelihood of hallucinations and increasing the reliability of responses.
 
 ---
 
-## 📌 Status projekta
+## 🔐 Security
 
-Projekt je bil razvit kot praktična implementacija RAG sistema za uporabo nad realnim prodajnim katalogom podjetja Codex d.o.o. in predstavlja primer integracije n8n, OpenAI in Pinecone v produkcijsko uporaben AI pomočnik.
+All API keys and credentials are stored exclusively in n8n Credentials.
 
+The repository does not contain:
+
+* OpenAI API keys,
+* Pinecone API keys,
+* Google Drive credentials,
+* other sensitive data.
+
+---
+
+## 📌 Project Status
+
+The project was developed as a practical implementation of a RAG system for use with the real sales catalog of Codex d.o.o., and represents an example of integrating n8n, OpenAI, and Pinecone into a production-ready AI assistant.
